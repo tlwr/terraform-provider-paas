@@ -29,8 +29,10 @@ func Provider() *schema.Provider {
 		ConfigureFunc: ProviderConfigurationBuilder,
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"paas_org":   dataOrg(),
-			"paas_space": dataSpace(),
+			"paas_org":           dataOrg(),
+			"paas_space":         dataSpace(),
+			"paas_domain":        dataDomain(),
+			"paas_shared_domain": dataSharedDomain(),
 		},
 	}
 }
