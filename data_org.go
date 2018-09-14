@@ -27,8 +27,8 @@ func dataOrg() *schema.Resource {
 func dataOrgRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*ProviderConfig).CFClient
 
-	name := d.Get("name")
-	org, err := client.GetOrgByName(d.Get("name").(string))
+	name := d.Get("name").(string)
+	org, err := client.GetOrgByName(name)
 
 	if err != nil {
 		return fmt.Errorf("Could not find org with name '%s': %s", name, err)
