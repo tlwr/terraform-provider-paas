@@ -1,0 +1,5 @@
+.terraform
+*.tf
+*.tfstate
+*.tfstate.backup
+terraform-provider-paas
