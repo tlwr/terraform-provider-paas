@@ -34,6 +34,7 @@ func Provider() *schema.Provider {
 			"paas_domain":        dataDomain(),
 			"paas_shared_domain": dataSharedDomain(),
 			"paas_user":          dataUser(),
+			"paas_app":           dataApp(),
 		},
 	}
 }
