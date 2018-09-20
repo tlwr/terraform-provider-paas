@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/tlwr/go-cfclient"
 )
 
 func dataUser() *schema.Resource {
@@ -11,6 +12,11 @@ func dataUser() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"username": &schema.Schema{
+				Type:     schema.TypeString,
+				Required: true,
+			},
+
+			"org_guid": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
 			},
@@ -27,16 +33,32 @@ func dataUser() *schema.Resource {
 func dataUserRead(d *schema.ResourceData, m interface{}) error {
 	client := m.(*ProviderConfig).CFClient
 
-	users, err := client.ListUsers()
+	orgGUID := d.Get("org_guid").(string)
+	users, err := client.ListOrgUsers(orgGUID)
 	if err != nil {
 		return fmt.Errorf("Could not lookup users", err)
 	}
 
 	username := d.Get("username").(string)
-	user := users.GetUserByUsername(username)
+	var retUser *cfclient.User
 
-	d.SetId(user.Guid)
-	d.Set("guid", user.Guid)
+	for _, user := range users {
+		if user.Username == username {
+			retUser = &user
+		}
+	}
+
+	if retUser == nil {
+		return fmt.Errorf(
+			"Could not find user '%s' in org '%s'",
+			username,
+			orgGUID,
+			err,
+		)
+	}
+
+	d.SetId(retUser.Guid)
+	d.Set("guid", retUser.Guid)
 
 	return nil
 }
